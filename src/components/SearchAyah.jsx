@@ -8,7 +8,7 @@ import { Close, Search2 } from './Icons';
 const SearchAyah = ({ props }) => {
     const dispatch = useDispatch();
     const { setShowModal } = props;
-    const { data: surahs, isLoading, isError } = useGetSurahQuery();
+    const { data: surahs } = useGetSurahQuery();
     const [selectedSurah, setSelectedSurah] = useState(1)
     const [numberofayahs, setNumberofayahs] = useState(7)
     const [selectedAyah, setSelectedAyah] = useState(1)
@@ -22,7 +22,7 @@ const SearchAyah = ({ props }) => {
     // },
     //     { skip: skip }
     // )
-    const { data: audio } = useAudioAyahQuery({
+    const { data: audio, isLoading, isSuccess } = useAudioAyahQuery({
         surah: selectedSurah,
         ayah: selectedAyah
     },
@@ -46,15 +46,12 @@ const SearchAyah = ({ props }) => {
 
 
     // decide what to print on the ui
-    let content = null;
-    if (isLoading) content = <div>Loading...</div>
-    if (isError) content = <div>Something went wrong</div>
-    if (!isLoading && !isError && surahs.data.length) content = <select
+    let content = <select
         onChange={e => {
             setSelectedSurah(e.target.value)
         }}
         className="w-full rounded border bg-white bg-opacity-10 appearance-none border-gray-300 py-2  text-base pl-3 pr-10">
-        {surahs.data.map(surah => {
+        {surahs?.data?.map(surah => {
             return <option
                 value={surah.number}
                 key={surah.number}
@@ -66,11 +63,12 @@ const SearchAyah = ({ props }) => {
     // handle submit 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // setShowModal(false)
         setSkip(false)
-        /// search surah and ayah from api
 
     }
+    useEffect(() => {
+        if (isSuccess) setShowModal(false)
+    }, [isSuccess])
 
 
 
@@ -120,7 +118,7 @@ const SearchAyah = ({ props }) => {
                                 </select>
                             </div>
                             <div className="mb-4 w-full">
-                                <button className='w-full rounded bg-indigo-500 hover:bg-indigo-600 text-white py-3 flex items-center justify-center gap-2'> <Search2 />  Search </button>
+                                <button className='w-full rounded bg-indigo-500 hover:bg-indigo-600 text-white py-3 flex items-center justify-center gap-2'> {isLoading ? "Loading..." : <Search2 />} </button>
                             </div>
                         </form>
                     </div>

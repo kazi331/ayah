@@ -1,7 +1,6 @@
 import axios from "axios";
 import { motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
-import { Modal } from "react-bootstrap";
+import React, { useState } from "react";
 // import { createFileName, useScreenshot } from "use-react-screenshot";
 import ReactPlayer from "react-player";
 
@@ -18,7 +17,9 @@ import f from "../assets/images/image9.jfif";
 import h from "../assets/images/image99.jpg";
 import e from "../assets/images/pinkUs.jfif";
 import g from "../assets/images/sunset.jfif";
-import { Download, Pause, Play, Refresh, Screenshot, Search, Search2 } from "./Icons";
+import { useRandomArabicAyahQuery, useRandomAudioAyahQuery, useRandomEnglishAyahQuery } from "../redux/features/randomAyah/randomAyahSlice";
+import Controls from "./Controls";
+import SearchAyah from "./SearchAyah";
 import SearchModal from "./SearchModal";
 
 const IMAGES = [q, a, b, c, d, e, f, g, h, i, j, k, l, v];
@@ -26,7 +27,6 @@ const IMAGES = [q, a, b, c, d, e, f, g, h, i, j, k, l, v];
 const Ayah = () => {
   const getImage = () => {
     const number = Math.floor(Math.random() * 13) + 1;
-    console.log(number);
     return IMAGES[number];
   };
 
@@ -52,13 +52,13 @@ const Ayah = () => {
 
   // const downloadScreenshot = () => takeScreenShot(ref.current).then(download);
 
-  const [ayah, setAyah] = useState([""]);
-  const [surah, setSurah] = useState([""]);
-  const [eng, setEng] = useState([""]);
-  const [audio, setAudio] = useState("");
+
 
   //audio fucntionality
   const [play, setPlay] = useState(false);
+  // random ayah 
+  const [ayahNumber, setAyahNumber] = useState(Math.floor(Math.random() * 6236) + 1)
+  console.log(ayahNumber)
 
   //Search Modal
 
@@ -67,49 +67,19 @@ const Ayah = () => {
 
   const [suraah, setSuraah] = useState("");
   const [aayah, setAayah] = useState("");
+  const [showModal, setShowModal] = useState(false)
 
-  //Random Ayah Gen
-  let ayahNumb = Math.floor(Math.random() * 6236) + 1;
 
-  // random ayah gen
-  const urlEnglish = `https://api.alquran.cloud/ayah/${ayahNumb}/en.sahih`;
-  const urlArabic = `https://api.alquran.cloud/ayah/${ayahNumb}`;
-  const ayahAudio = `https://api.alquran.cloud/v1/ayah/${ayahNumb}/ar.hudhaify`;
+  // random ayah 
+  // let ayahNumber = Math.floor(Math.random() * 6236) + 1;
 
-  //Ayah Search
+  // const { data: arabic } = useRandomArabicAyahQuery();
+  const { data: audio } = useRandomAudioAyahQuery(ayahNumber);
+  const { data: english, isLoading, isError, } = useRandomEnglishAyahQuery(ayahNumber);
 
-  const searchedAyah = `${suraah}:${aayah}`;
-  const searchedEnglish = `https://api.alquran.cloud/ayah/${searchedAyah}/en.sahih`;
-  const searchedArabic = `https://api.alquran.cloud/ayah/${searchedAyah}`;
-  const searchedAudio = `https://api.alquran.cloud/v1/ayah/${searchedAyah}/ar.hudhaify`;
-
-  const refreshPage = () => {
-    axios
-      .all([axios.get(urlArabic), axios.get(urlEnglish), axios.get(ayahAudio)])
-      .then(
-        axios.spread((urlArabic, urlEnglish, ayahAudio) => {
-          setSurah(urlArabic.data.data.surah);
-          setEng(urlEnglish.data.data);
-          setAyah(urlArabic.data.data);
-          setAudio(ayahAudio.data.data.audio);
-        }, [])
-      );
-  };
-
-  useEffect(() => {
-    axios
-      .all([axios.get(urlArabic), axios.get(urlEnglish), axios.get(ayahAudio)])
-      .then(
-        axios.spread((urlArabic, urlEnglish, ayahAudio) => {
-          setAudio(ayahAudio.data.data.audio);
-          setAyah(urlArabic.data.data);
-          setSurah(urlArabic.data.data.surah);
-          setEng(urlEnglish.data.data);
-        })
-      );
-  }, []);
-
-  //search useEffect
+  const refresh = () => {
+    setAyahNumber(Math.floor(Math.random() * 6236) + 1)
+  }
 
   const print = () => {
     axios
@@ -133,6 +103,59 @@ const Ayah = () => {
     setAayah("");
   };
 
+
+  // decide what to print on the ui
+  let content = null;
+  if (isLoading) content = <div>loading...</div>
+  if (!isLoading && isError) content = <div>error...</div>
+  if (!isLoading && !isError && english && audio) content = (
+    <div className="   text-1xl font-medium text-white text-center 	">
+      <p className="mb-2"> {audio.data?.surah.name}</p>
+      <div className="font-mono   text-xs font-small text-white text-center	">
+        {audio.data?.surah.englishName} - {audio.data?.surah.englishNameTranslation}
+      </div>
+      <div className="pt-6"></div>
+      <div className="flex flex-col items-center md:items-start">
+        <div>
+          <h2
+            className="  font-medium text-xl text-white	 text-center	"
+            style={{ alignSelf: "center", writingDirection: "rlt" }}
+          >
+            {audio.data?.text}
+          </h2>
+
+          <div className="pt-6"></div>
+
+          <h5 className="   font-mono font-medium text-xs text-white	 text-center	">
+            -{english?.data?.text ? english.data.text : "Click the refresh icon below to reveal an Ayah"}
+          </h5>
+
+          <div className="pt-8"></div>
+          <h1 className="text-center  font-mono text-xs  text-white	">
+            {english?.data?.surah.revelationType} Ayah
+          </h1>
+        </div>
+      </div>
+      <h5 className="text-right pb-2.5  font-mono  text-xs text-white text-opacity-50		">
+
+        - {english?.data?.surah.number}:{english?.data?.numberInSurah} -
+      </h5>
+
+      {/* controls  */}
+      <Controls props={{ setShowModal, refresh, play, setPlay, setSmShow, handleClick }} />
+
+      <ReactPlayer
+        url={audio?.data?.audio}
+        playing={play}
+        height={0}
+        width={0}
+        onEnded={() => setPlay(false)}
+      />
+      <p className="text-gray-400  ... font-mono text-sm text-centre ">Aayah.app</p>
+    </div>
+  )
+
+
   return (
     <div
       // ref={ref}
@@ -151,115 +174,13 @@ const Ayah = () => {
       >
         <div className="bg-fixed">
           <div className="flex flex-col space-y-4 h-full justify-between">
-            <div className="text-base text-1xl font-medium text-white text-center 	">
-
-              {surah.name}
-              <div className="font-mono text-base text-xs font-small text-white text-center	">
-                {surah.englishName} - {surah.englishNameTranslation}
-              </div>
-              <div className="pt-6"></div>
-              <div className="flex flex-col items-center md:items-start">
-                <div>
-                  <h2
-                    className="text-base font-medium text-xl text-white	 text-center	"
-                    style={{ alignSelf: "center", writingDirection: "rlt" }}
-                  >
-                    {ayah.text}
-                  </h2>
-
-                  <div className="pt-6"></div>
-
-                  <h5 className="text-base  font-mono font-medium text-xs text-white	 text-center	">
-                    -{eng.text
-                      ? eng.text
-                      : "Click the refresh icon below to reveal an Ayah"}
-                  </h5>
-
-                  <div className="pt-8"></div>
-                  <h1 className="text-center  font-mono text-xs text-center text-white	">
-                    {surah.revelationType} Ayah
-                  </h1>
-                </div>
-              </div>
-              <h5 className="text-right pb-2.5  font-mono  text-xs text-white text-opacity-50	 text-center	">
-
-                - {surah.number}:{eng.numberInSurah} -
-              </h5>
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                type="button"
-                className="pr-4"
-                onClick={refreshPage}
-              >
-
-                <Refresh />
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="pr-4"
-              // onClick={downloadScreenshot}
-              >
-
-                <Download />
-
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="pr-4"
-                onClick={() => setSmShow(true)}
-              >
-                <Search />
-
-              </motion.button>
-              
-              {/* search modal  */}
-              <SearchModal props={{ smShow, setSmShow, suraah, aayah, setAayah, setSuraah }} />
-
-              {play === false && (
-                <motion.button
-                  className="pr-4"
-                  onClick={() => setPlay(true)}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <Play />
-
-                </motion.button>
-              )}
-              {play === true && (
-                <motion.button
-                  className="pr-4"
-                  onClick={() => setPlay(false)}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <Pause />
-                </motion.button>
-              )}
-              <motion.button
-                onClick={handleClick}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <Screenshot />
-
-              </motion.button>
-              <ReactPlayer
-                url={audio}
-                playing={play}
-                height={0}
-                width={0}
-                onEnded={() => setPlay(false)}
-              />
-              <p className="text-gray-400  ... font-mono text-sm text-centre ">
-                Aayah.app
-              </p>
-            </div>
+            {content}
           </div>
         </div>
+        <SearchModal props={{ smShow, setSmShow, suraah, aayah, setAayah, setSuraah }} />
+        {/* {showModal ? <TailwindModal props={{ showModal, setShowModal }} /> : null} */}
+        {/* <TailwindModal props={{ showModal, setShowModal }} />  */}
+        <SearchAyah props={{ showModal, setShowModal }} />
       </motion.div>
     </div>
   );

@@ -4,34 +4,33 @@ import { Modal } from 'react-bootstrap';
 import logo from "../assets/images/new.png";
 import { Search2 } from "./Icons";
 
-const SearchModal = (props) => {
+const SearchModal = ({ props }) => {
   const { smShow, setSmShow, suraah, aayah, setAayah, setSuraah } = props;
-  console.log({ smShow, setSmShow, suraah, aayah, setAayah, setSuraah })
   return (
     <Modal
-      className="opacity-80 rounded-3xl shadow-xl "
+      className="opacity-80 max-w-3xl mx-auto p-4  rounded-3xl shadow-xl "
       size="sm"
       keyboard="true"
       show={smShow}
       onHide={() => setSmShow(false)}
-      aria-labelledby="contained-modal-title-vcenter"
+      // aria-labelledby="contained-modal-title-vcenter"
       centered
     >
       <Modal.Header closeButton>
         <img
-          className="h-10 w-10  rounded-full"
+          className="h-10 w-10 rounded-full"
           src={logo}
           alt="logo"
         />
 
-        <Modal.Title className="pl-3 pt-1	 text-center font-mono text-md text-center text-black	">
+        <Modal.Title className="pl-3 pt-1	 text-center font-mono text-md text-black	">
           Search for an Ayah
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <lable className="text-black text-opacity-55 ... font-mono text-sm text-centre ">
+        <label className="text-black text-opacity-55 ... font-mono text-sm text-centre ">
           Surah Number
-        </lable>
+        </label>
         <input
           placeholder="e.g Surah Fatiha would be 1"
           className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
@@ -44,9 +43,9 @@ const SearchModal = (props) => {
 
         <div className="pt-6 ..." />
 
-        <lable className="text-black text-opacity-55 ... font-mono text-sm text-centre ">
+        <label className="text-black text-opacity-55 ... font-mono text-sm text-centre ">
           Ayah Number
-        </lable>
+        </label>
         <input
           type="text"
           className=" appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"

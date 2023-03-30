@@ -8,6 +8,8 @@ const store = configureStore({
         surah: surahSlice,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(apiSlice.middleware),
+    // disable devtools for production
+    devTools: import.meta.env.PROD ? false : true,
 });
 
 export default store;

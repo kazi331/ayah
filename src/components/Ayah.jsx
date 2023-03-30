@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import React, { useRef, useState } from "react";
 import ReactPlayer from "react-player";
+import { useSelector } from "react-redux";
 import { saveAsJpeg } from 'save-html-as-image';
 
 import v from "../assets/images/image00.jpg";
@@ -50,47 +51,41 @@ const Ayah = () => {
   const [play, setPlay] = useState(false);
   // random ayah 
   const [ayahNumber, setAyahNumber] = useState(Math.floor(Math.random() * 6236) + 1)
-
-
   const [showModal, setShowModal] = useState(false)
 
-
+  const { english, audio } = useSelector(state => state.surah)
+  
   // random ayah 
   // let ayahNumber = Math.floor(Math.random() * 6236) + 1;
 
-  const { data: audio } = useRandomAudioAyahQuery(ayahNumber);
-  const { data: english, isLoading, isError, } = useRandomEnglishAyahQuery(ayahNumber);
+  const { _, isError, isLoading } = useRandomAudioAyahQuery(ayahNumber);
+  const { __, } = useRandomEnglishAyahQuery(ayahNumber);
 
   const refresh = () => {
     setAyahNumber(Math.floor(Math.random() * 6236) + 1)
   }
 
-
-
-
-  // decide what to print on the ui
-  let content = null;
-  if (isLoading) content = <div>loading...</div>
-  if (!isLoading && isError) content = <div>error...</div>
-  if (!isLoading && !isError && english && audio) content = (
+  
+  // what to render
+  let content = (
     <div className="   text-1xl font-medium text-white text-center 	">
-      <p > {audio.data?.surah.name}</p>
+      <p > {audio?.surah?.name}</p>
       <div className="font-mono   text-xs font-small text-white text-center	">
-        {audio.data?.surah.englishName} - {audio.data?.surah.englishNameTranslation}
+        {audio?.surah?.englishName} - {audio?.surah?.englishNameTranslation}
       </div>
 
       <div className=" flex  flex-col gap-3 font-mono font-medium  text-white	 text-center 	mt-4">
-        <h2 style={{ writingDirection: "rlt" }} >{audio.data?.text}</h2>
-        <p >-{english?.data?.text ? english.data.text : "Click the refresh icon below to reveal an Ayah"}</p>
-        <h1 >{english?.data?.surah.revelationType} Ayah</h1>
-        <h5 className="text-right pb-2.5  font-mono  text-xs text-white text-opacity-50		"> - {english?.data?.surah.number}:{english?.data?.numberInSurah} - </h5>
+        <h2 style={{ writingDirection: "rlt" }} >{audio?.text}</h2>
+        <p >-{english?.text ? english.text : "Click the refresh icon below to reveal an Ayah"}</p>
+        <h1 >{english?.surah?.revelationType} Ayah</h1>
+        <h5 className="text-right pb-2.5  font-mono  text-xs text-white text-opacity-50		"> - {english?.number}:{english?.numberInSurah} - </h5>
       </div>
 
       {/* controls  */}
       <Controls props={{ setShowModal, downloadImg, refresh, play, setPlay, handleClick }} />
 
       <ReactPlayer
-        url={audio?.data?.audio}
+        url={audio?.audio}
         playing={play}
         height={0}
         width={0}
@@ -103,8 +98,7 @@ const Ayah = () => {
 
   return (
     <>
-
-      <div
+<div
         ref={imgRef}
         className="flex items-center justify-center min-h-screen "
         style={{

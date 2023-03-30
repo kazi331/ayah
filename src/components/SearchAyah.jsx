@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import logo from '../assets/images/new.png';
 import { useGetSurahQuery } from '../redux/features/api/apiSlice';
-import { useArabicAyahQuery, useAudioAyahQuery, useEnglishAyahQuery } from '../redux/features/ayah/ayahSlice';
+import { useAudioAyahQuery, useEnglishAyahQuery } from '../redux/features/ayah/ayahSlice';
 import { Close, Search2 } from './Icons';
 
 const SearchAyah = ({ props }) => {
@@ -13,7 +13,7 @@ const SearchAyah = ({ props }) => {
     const [numberofayahs, setNumberofayahs] = useState(7)
     const [selectedAyah, setSelectedAyah] = useState(1)
     const [skip, setSkip] = useState(true)
-    
+
 
 
     // const { data: ayah, isLoading: ayahLoading, isSuccess } = useArabicAyahQuery({
@@ -44,6 +44,7 @@ const SearchAyah = ({ props }) => {
     }, [selectedSurah])
 
 
+
     // decide what to print on the ui
     let content = null;
     if (isLoading) content = <div>Loading...</div>
@@ -68,12 +69,11 @@ const SearchAyah = ({ props }) => {
         // setShowModal(false)
         setSkip(false)
         /// search surah and ayah from api
-        
+
     }
-    
-    console.log({ audio, english})
-    
-    
+
+
+
     // close modal when click on outside of the modal
     const closeModal = (e) => {
         if (e.target.classList.contains("modal")) {

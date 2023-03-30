@@ -6,9 +6,6 @@ const apiSlice = createApi({
         getSurah: builder.query({
             query: () => `/surah`,
         }),
-        getAyah: builder.query({
-            query: ({ surah, ayah }) => `ayah/${surah}:${ayah}}`,
-        }),
     }),
 
 })

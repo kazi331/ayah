@@ -44,7 +44,7 @@ const SearchAyah = ({ props }) => {
     // handle submit 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // setShowModal(false)
+        setShowModal(false)
         setSkip(false)
         if (isSuccess) {
             console.log(ayah.data.text)
@@ -53,15 +53,19 @@ const SearchAyah = ({ props }) => {
 
     }
 
+    const handleClick = (e) => {
+        if (e.target.classList.contains("modal")) {
+            setShowModal(false);
+        }
+    }
+    window.addEventListener("click", handleClick)
     return (
-        <div className={`fixed ${showModal ? "transition-all duration-300 block" : "hidden"} transition-all duration-300 inset-0 overflow-y-auto flex items-center justify-center  `} >
-            <div className=" relative bg-white bg-opacity-70 backdrop-blur rounded-lg text-left  shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full p-4 lg:p8" >
-                <div onClick={() => setShowModal(false)} className="absolute cursor-pointer -top-10 right-0 bg-red-500 hover:bg-red-600 bg-opacity-50 text-white p-1 rounded ">
-                    <Close className="w-5 h-5 " />
-                </div>
+        <div onClick={handleClick} className={`fixed ${showModal ? "transition-all duration-300 block" : "hidden"} hidden modal transition-all  duration-300 inset-0 my-16 md:flex md:items-center px-2 md:px-0`} >
+            <div className=" relative bg-white bg-opacity-70 backdrop-blur mx-auto  rounded-lg text-left  shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full p-4 lg:p8 " >
+
                 {/* modal body */}
                 <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                    <div className="border-b pb-2">
+                    <div className="border-b pb-2 flex items-center justify-between">
                         <h3 className="text-lg leading-6 font-medium text-gray-700 flex items-center gap-2 ">
                             <img
                                 className="h-8 w-8 rounded-full"
@@ -69,6 +73,9 @@ const SearchAyah = ({ props }) => {
                                 alt="logo"
                             />  Search for an Ayah
                         </h3>
+                        <div onClick={() => setShowModal(false)} className="cursor-pointer -top-10 right-0 bg-gray-200 hover:bg-red-600 bg-opacity-50 text-red-500 hover:text-white transition-all p-1 rounded ">
+                            <Close className="w-5 h-5 " />
+                        </div>
                     </div>
                     <div className="mt-2">
                         <form onSubmit={handleSubmit}>

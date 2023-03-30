@@ -1,6 +1,6 @@
-import axios from "axios";
 import { motion } from "framer-motion";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
+import { saveAsJpeg } from 'save-html-as-image';
 // import { createFileName, useScreenshot } from "use-react-screenshot";
 import ReactPlayer from "react-player";
 
@@ -17,10 +17,9 @@ import f from "../assets/images/image9.jfif";
 import h from "../assets/images/image99.jpg";
 import e from "../assets/images/pinkUs.jfif";
 import g from "../assets/images/sunset.jfif";
-import { useRandomArabicAyahQuery, useRandomAudioAyahQuery, useRandomEnglishAyahQuery } from "../redux/features/randomAyah/randomAyahSlice";
+import { useRandomAudioAyahQuery, useRandomEnglishAyahQuery } from "../redux/features/randomAyah/randomAyahSlice";
 import Controls from "./Controls";
 import SearchAyah from "./SearchAyah";
-import SearchModal from "./SearchModal";
 
 const IMAGES = [q, a, b, c, d, e, f, g, h, i, j, k, l, v];
 
@@ -37,36 +36,23 @@ const Ayah = () => {
     setActiveImage(image);
   };
 
-  // const ref = createRef(null);
-  // const [image, takeScreenShot] = useScreenshot({
-  //   type: "image/jpeg",
-  //   quality: 10.0,
-  // });
 
-  // const download = (image, { name = "img", extension = "jpg" } = {}) => {
-  //   const a = document.createElement("a");
-  //   a.href = image;
-  //   a.download = createFileName(extension, name);
-  //   a.click();
-  // };
-
-  // const downloadScreenshot = () => takeScreenShot(ref.current).then(download);
-
+  // screenshot download
+  const imgRef = useRef();
+  const downloadImg = () => {
+    saveAsJpeg(imgRef.current, {
+      fileName: "ayah",
+      quality: 1
+    });
+  };
 
 
   //audio fucntionality
   const [play, setPlay] = useState(false);
   // random ayah 
   const [ayahNumber, setAyahNumber] = useState(Math.floor(Math.random() * 6236) + 1)
-  console.log(ayahNumber)
 
-  //Search Modal
 
-  const [smShow, setSmShow] = useState(false);
-  // const handleClose = () => setSmShow(false);
-
-  const [suraah, setSuraah] = useState("");
-  const [aayah, setAayah] = useState("");
   const [showModal, setShowModal] = useState(false)
 
 
@@ -81,27 +67,7 @@ const Ayah = () => {
     setAyahNumber(Math.floor(Math.random() * 6236) + 1)
   }
 
-  const print = () => {
-    axios
-      .all([
-        axios.get(searchedArabic),
-        axios.get(searchedEnglish),
-        axios.get(searchedAudio),
-      ])
 
-      .then(
-        axios.spread((searchedArabic, searchedEnglish, searchedAudio) => {
-          setSurah(searchedArabic.data.data.surah);
-          setEng(searchedEnglish.data.data);
-          setAyah(searchedArabic.data.data);
-          setAudio(searchedAudio.data.data.audio);
-        }, [])
-      );
-
-    setSmShow(false);
-    setSuraah("");
-    setAayah("");
-  };
 
 
   // decide what to print on the ui
@@ -110,39 +76,20 @@ const Ayah = () => {
   if (!isLoading && isError) content = <div>error...</div>
   if (!isLoading && !isError && english && audio) content = (
     <div className="   text-1xl font-medium text-white text-center 	">
-      <p className="mb-2"> {audio.data?.surah.name}</p>
+      <p > {audio.data?.surah.name}</p>
       <div className="font-mono   text-xs font-small text-white text-center	">
         {audio.data?.surah.englishName} - {audio.data?.surah.englishNameTranslation}
       </div>
-      <div className="pt-6"></div>
-      <div className="flex flex-col items-center md:items-start">
-        <div>
-          <h2
-            className="  font-medium text-xl text-white	 text-center	"
-            style={{ alignSelf: "center", writingDirection: "rlt" }}
-          >
-            {audio.data?.text}
-          </h2>
 
-          <div className="pt-6"></div>
-
-          <h5 className="   font-mono font-medium text-xs text-white	 text-center	">
-            -{english?.data?.text ? english.data.text : "Click the refresh icon below to reveal an Ayah"}
-          </h5>
-
-          <div className="pt-8"></div>
-          <h1 className="text-center  font-mono text-xs  text-white	">
-            {english?.data?.surah.revelationType} Ayah
-          </h1>
-        </div>
+      <div className=" flex  flex-col gap-3 font-mono font-medium  text-white	 text-center 	mt-4">
+        <h2 style={{ writingDirection: "rlt" }} >{audio.data?.text}</h2>
+        <p >-{english?.data?.text ? english.data.text : "Click the refresh icon below to reveal an Ayah"}</p>
+        <h1 >{english?.data?.surah.revelationType} Ayah</h1>
+        <h5 className="text-right pb-2.5  font-mono  text-xs text-white text-opacity-50		"> - {english?.data?.surah.number}:{english?.data?.numberInSurah} - </h5>
       </div>
-      <h5 className="text-right pb-2.5  font-mono  text-xs text-white text-opacity-50		">
-
-        - {english?.data?.surah.number}:{english?.data?.numberInSurah} -
-      </h5>
 
       {/* controls  */}
-      <Controls props={{ setShowModal, refresh, play, setPlay, setSmShow, handleClick }} />
+      <Controls props={{ setShowModal, downloadImg, refresh, play, setPlay, handleClick }} />
 
       <ReactPlayer
         url={audio?.data?.audio}
@@ -151,38 +98,40 @@ const Ayah = () => {
         width={0}
         onEnded={() => setPlay(false)}
       />
-      <p className="text-gray-400  ... font-mono text-sm text-centre ">Aayah.app</p>
+      <p className="text-gray-100 font-mono text-sm text-centre ">Aayah.app</p>
     </div>
   )
 
 
   return (
-    <div
-      // ref={ref}
-      className="flex items-center justify-center min-h-screen  "
-      style={{
-        backgroundImage: `url('${activeImage}')`,
-        backgroundSize: "cover",
-      }}
-    >
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: [0.5, 1.2, 1.2, 1, 1] }}
-        transition={{ duration: 2 }}
-        className="max-w-5xl  p-4 m-6  rounded-3xl shadow-xl  	"
-        style={{ backgroundImage: `url('${activeImage}')` }}
+    <>
+
+      <div
+        ref={imgRef}
+        className="flex items-center justify-center min-h-screen "
+        style={{
+          backgroundImage: `url('${activeImage}')`,
+          backgroundSize: "cover",
+        }}
       >
-        <div className="bg-fixed">
-          <div className="flex flex-col space-y-4 h-full justify-between">
-            {content}
+        <motion.div
+
+          initial={{ scale: 0 }}
+          animate={{ scale: [0.5, 1.2, 1.2, 1, 1] }}
+          transition={{ duration: 2 }}
+          className="max-w-5xl m-2 md:m-4 lg:m-6  rounded-3xl shadow-xl w-full  backdrop-filter  backdrop-blur-lg bg-opacity-10 bg-gray-900"
+        // style={{ backgroundImage: `url('${activeImage}')` }}
+        >
+          <div className="bg-fixed" >
+            <div className="flex flex-col space-y-4 h-full p-4 md:p-6 lg:p-8 justify-between text-center ">
+              {content}
+            </div>
           </div>
-        </div>
-        <SearchModal props={{ smShow, setSmShow, suraah, aayah, setAayah, setSuraah }} />
-        {/* {showModal ? <TailwindModal props={{ showModal, setShowModal }} /> : null} */}
-        {/* <TailwindModal props={{ showModal, setShowModal }} />  */}
-        <SearchAyah props={{ showModal, setShowModal }} />
-      </motion.div>
-    </div>
+        </motion.div>
+      </div>
+      {showModal ? <SearchAyah props={{ showModal, setShowModal }} /> : null}
+
+    </>
   );
 };
 

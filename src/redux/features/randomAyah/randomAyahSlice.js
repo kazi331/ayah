@@ -1,13 +1,7 @@
 import apiSlice from "../api/apiSlice";
 
-
-
-
 const randomAyahSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        randomArabicAyah: builder.query({
-            query: (ayahNumber) => `ayah/${ayahNumber}`,
-        }),
         randomEnglishAyah: builder.query({
             query: (ayahNumber) => `ayah/${ayahNumber}/en.sahih`,
         }),

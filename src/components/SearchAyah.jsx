@@ -2,18 +2,39 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import logo from '../assets/images/new.png';
 import { useGetSurahQuery } from '../redux/features/api/apiSlice';
-import { useArabicAyahQuery } from '../redux/features/ayah/ayahSlice';
+import { useArabicAyahQuery, useAudioAyahQuery, useEnglishAyahQuery } from '../redux/features/ayah/ayahSlice';
 import { Close, Search2 } from './Icons';
 
 const SearchAyah = ({ props }) => {
     const dispatch = useDispatch();
-    const { showModal, setShowModal } = props;
+    const { setShowModal } = props;
     const { data: surahs, isLoading, isError } = useGetSurahQuery();
     const [selectedSurah, setSelectedSurah] = useState(1)
     const [numberofayahs, setNumberofayahs] = useState(7)
     const [selectedAyah, setSelectedAyah] = useState(1)
     const [skip, setSkip] = useState(true)
-    const { data: ayah, isLoading: ayahLoading, isError: ayahError, isSuccess } = useArabicAyahQuery({ surah: selectedSurah, ayah: selectedAyah }, { skip: skip })
+    
+
+
+    // const { data: ayah, isLoading: ayahLoading, isSuccess } = useArabicAyahQuery({
+    //     surah: selectedSurah,
+    //     ayah: selectedAyah
+    // },
+    //     { skip: skip }
+    // )
+    const { data: audio } = useAudioAyahQuery({
+        surah: selectedSurah,
+        ayah: selectedAyah
+    },
+        { skip: skip }
+    )
+    const { data: english } = useEnglishAyahQuery({
+        surah: selectedSurah,
+        ayah: selectedAyah
+    },
+        { skip: skip }
+    )
+
 
 
     useEffect(() => {
@@ -44,23 +65,24 @@ const SearchAyah = ({ props }) => {
     // handle submit 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setShowModal(false)
+        // setShowModal(false)
         setSkip(false)
-        if (isSuccess) {
-            console.log(ayah.data.text)
-        }
         /// search surah and ayah from api
-
+        
     }
-
-    const handleClick = (e) => {
+    
+    console.log({ audio, english})
+    
+    
+    // close modal when click on outside of the modal
+    const closeModal = (e) => {
         if (e.target.classList.contains("modal")) {
             setShowModal(false);
         }
     }
-    window.addEventListener("click", handleClick)
+    window.addEventListener("click", closeModal)
     return (
-        <div onClick={handleClick} className={`fixed ${showModal ? "transition-all duration-300 block" : "hidden"} hidden modal transition-all  duration-300 inset-0 my-16 md:flex md:items-center px-2 md:px-0`} >
+        <div className={`fixed  modal transition-all  duration-300 inset-0 my-16 md:flex md:items-center px-2 md:px-0`} >
             <div className=" relative bg-white bg-opacity-70 backdrop-blur mx-auto  rounded-lg text-left  shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full p-4 lg:p8 " >
 
                 {/* modal body */}
@@ -81,7 +103,7 @@ const SearchAyah = ({ props }) => {
                         <form onSubmit={handleSubmit}>
                             <div className="mb-4">
                                 <label className="block text-gray-700 text-sm font-bold mb-2 focus:outline-none" htmlFor="surah-number">
-                                    Surah Number
+                                    Select Surah
                                 </label>
                                 {content}
                             </div>

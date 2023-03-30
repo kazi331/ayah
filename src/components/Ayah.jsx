@@ -1,8 +1,7 @@
 import { motion } from "framer-motion";
 import React, { useRef, useState } from "react";
-import { saveAsJpeg } from 'save-html-as-image';
-// import { createFileName, useScreenshot } from "use-react-screenshot";
 import ReactPlayer from "react-player";
+import { saveAsJpeg } from 'save-html-as-image';
 
 import v from "../assets/images/image00.jpg";
 import { default as a, default as q } from "../assets/images/image2.jpg";
@@ -59,7 +58,6 @@ const Ayah = () => {
   // random ayah 
   // let ayahNumber = Math.floor(Math.random() * 6236) + 1;
 
-  // const { data: arabic } = useRandomArabicAyahQuery();
   const { data: audio } = useRandomAudioAyahQuery(ayahNumber);
   const { data: english, isLoading, isError, } = useRandomEnglishAyahQuery(ayahNumber);
 

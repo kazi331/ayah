@@ -2,14 +2,20 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const surahSlice = createSlice({
     name: 'surah',
-    initialState: {},
+    initialState: {
+        english: {},
+        audio: {}
+    },
     reducers: {
-        getSurah: (state, action) => {
-            state.surah = action.payload;
+        setEnglish: (state, action) => {
+            state.english = action.payload;
+        },
+        setAudio: (state, action) => {
+            state.audio = action.payload;
         }
     }
 
 })
 
-export const { getSurah } = surahSlice.actions;
+export const { setAudio, setEnglish } = surahSlice.actions;
 export default surahSlice.reducer

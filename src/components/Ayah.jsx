@@ -2,6 +2,8 @@ import React, { useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { useSelector } from "react-redux";
 
+import m from "../assets/images/bb.jpg";
+import o from "../assets/images/dark.jpg";
 import v from "../assets/images/image00.jpg";
 import a from "../assets/images/image2.jpg";
 import b from "../assets/images/image3.jpg";
@@ -11,8 +13,6 @@ import i from "../assets/images/image55.jpg";
 import j from "../assets/images/image66.jpg";
 import k from "../assets/images/image77.jpg";
 import l from "../assets/images/image88.jpg";
-import m from "../assets/images/bb.jpg";
-import o from "../assets/images/dark.jpg";
 import f from "../assets/images/image9.jpg";
 import h from "../assets/images/image99.jpg";
 import e from "../assets/images/pinkUs.jpg";
@@ -48,10 +48,8 @@ const Ayah = () => {
     setActiveImage(image);
   };
 
-
   // screenshot download
   const imgRef = useRef();
-  const canvasRef = useRef();
 
   const { data: randomAyah } = useRandomAudioAyahQuery(ayahNumber);
   const { data: randomEnglish, isLoading, isError } = useRandomEnglishAyahQuery(ayahNumber);
@@ -69,8 +67,7 @@ const Ayah = () => {
   if (isError) content = <div className="flex justify-center items-center h-full">
     <div className="text-2xl text-red-500">Something went wrong</div>
   </div>
-  if (!isError && !isLoading && randomEnglish) content = <div className="flex flex-col space-y-4 h-full p-4 md:p-6 lg:p-8 justify-between text-center ">
-
+  if (!isError && !isLoading && randomEnglish) content = (<div className="flex flex-col space-y-4 h-full p-4 md:p-6 lg:p-8 justify-between text-center ">
     <div className=" text-1xl font-medium text-white text-center 	">
       <p > {audio?.surah?.name}</p>
       <div className="  text-sm font-small text-white text-center">
@@ -86,7 +83,7 @@ const Ayah = () => {
       </div>
 
       {/* controls  */}
-      <Controls props={{ setShowModal, canvasRef, imgRef, refresh, play, setPlay, randomizeBg }} />
+      <Controls props={{ setShowModal, imgRef, refresh, play, setPlay, randomizeBg }} />
 
       <ReactPlayer
         url={audio?.audio}
@@ -97,13 +94,12 @@ const Ayah = () => {
       />
       <p className="text-gray-100  text-sm text-centre ">Aayah.app</p>
     </div>
-  </div>
+  </div>)
 
 
 
   return (
     <>
-      <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
       <div
         ref={imgRef}
         className="p-4 flex items-center justify-center min-h-screen bg-gray-900"
@@ -113,21 +109,11 @@ const Ayah = () => {
         }}
       >
         <div className={`${isLoading ? "w-96 h-96 overflow-hidden rounded" : "w-full h-full"}  transition-all duration-1000`}>
-          <div
-            // initial={{ scale: 0 }}
-            // animate={{ scale: [0.5, 1.2, 1.2, 1, 1] }}
-            // transition={{ duration: 2 }}
-            className="max-w-5xl mx-auto  rounded-3xl shadow-xl w-full  backdrop-filter  backdrop-blur-lg bg-opacity-10 bg-gray-900"
-          // style={{ backgroundImage: `url('${activeImage}')` }}
-          >
+          <div className="max-w-5xl mx-auto  rounded-3xl shadow-xl w-full  backdrop-filter  backdrop-blur-lg bg-opacity-10 bg-gray-900">
             <div className="bg-fixed" >
               <div className="flex flex-col space-y-4 h-full p-4 md:p-6 lg:p-8 justify-between text-center ">
                 {/* main content  */}
-
                 {content}
-
-
-
               </div>
             </div>
           </div>

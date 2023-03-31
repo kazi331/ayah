@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import logo from '../assets/images/new.png';
+import logo from '../assets/images/logo.png';
 import { useGetSurahQuery } from '../redux/features/api/apiSlice';
 import { useAudioAyahQuery, useEnglishAyahQuery } from '../redux/features/ayah/ayahSlice';
 import { Close, Search2 } from './Icons';
@@ -12,12 +12,7 @@ const SearchAyah = ({ setShowModal, showModal }) => {
     const [skip, setSkip] = useState(true)
 
     
-    // const { data: ayah, isLoading: ayahLoading, isSuccess } = useArabicAyahQuery({
-    //     surah: selectedSurah,
-    //     ayah: selectedAyah
-    // },
-    //     { skip: skip }
-    // )
+    
     const { data: audio, isLoading, isSuccess } = useAudioAyahQuery({
         surah: selectedSurah,
         ayah: selectedAyah

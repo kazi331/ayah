@@ -17,7 +17,10 @@ import f from "../assets/images/image9.jpg";
 import h from "../assets/images/image99.jpg";
 import e from "../assets/images/pinkUs.jpg";
 import g from "../assets/images/sunset.jpg";
-import { useRandomAudioAyahQuery, useRandomEnglishAyahQuery } from "../redux/features/randomAyah/randomAyahSlice";
+import {
+  useRandomAudioAyahQuery,
+  useRandomEnglishAyahQuery
+} from "../redux/features/randomAyah/randomAyahSlice";
 import Controls from "./Controls";
 import SearchAyah from "./SearchAyah";
 
@@ -49,11 +52,6 @@ const Ayah = () => {
   // screenshot download
   const imgRef = useRef();
   const canvasRef = useRef();
-
-
-
-  // random ayah 
-  // let ayahNumber = Math.floor(Math.random() * 6236) + 1;
 
   const { data: randomAyah } = useRandomAudioAyahQuery(ayahNumber);
   const { data: randomEnglish, isLoading, isError } = useRandomEnglishAyahQuery(ayahNumber);

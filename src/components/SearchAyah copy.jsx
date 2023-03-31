@@ -7,11 +7,11 @@ import { Close, Search2 } from './Icons';
 const SearchAyah = ({ setShowModal, showModal }) => {
     const { data: surahs } = useGetSurahQuery();
     const [selectedSurah, setSelectedSurah] = useState(1)
-    const [selectedAyah, setSelectedAyah] = useState(1)
     const [numberofayahs, setNumberofayahs] = useState(7)
+    const [selectedAyah, setSelectedAyah] = useState(1)
     const [skip, setSkip] = useState(true)
 
-    
+    console.log('rendering search')
     // const { data: ayah, isLoading: ayahLoading, isSuccess } = useArabicAyahQuery({
     //     surah: selectedSurah,
     //     ayah: selectedAyah

@@ -59,15 +59,15 @@ const Ayah = () => {
   // random ayah 
   // let ayahNumber = Math.floor(Math.random() * 6236) + 1;
 
-  const { data: randomAyah } = useRandomAudioAyahQuery(ayahNumber);
-  const { data: randomEnglish} = useRandomEnglishAyahQuery(ayahNumber);
+  const { _, isError, isLoading } = useRandomAudioAyahQuery(ayahNumber);
+  const { __, } = useRandomEnglishAyahQuery(ayahNumber);
 
   const refresh = () => {
     setAyahNumber(Math.floor(Math.random() * 6236) + 1);
     randomizeBg();
   }
 
-  // console.log('rendering')
+  console.log('rendering')
 
   return (
     <>
@@ -122,7 +122,7 @@ const Ayah = () => {
             </div>
           </div>
         </motion.div>
-       {showModal ? <SearchAyah showModal={showModal} setShowModal={setShowModal} /> : null}
+        <SearchAyah showModal={showModal} setShowModal={setShowModal} />
       </div>
 
     </>

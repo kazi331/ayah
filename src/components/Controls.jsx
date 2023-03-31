@@ -1,76 +1,74 @@
-import { motion } from 'framer-motion';
 import React from 'react';
-import { Download, Pause, Play, Refresh, Screenshot, Search } from './Icons';
+import { Download, Pause, Play, Refresh, Screenshot, Search, Share } from './Icons';
 
 
 
 const Controls = ({ props }) => {
-    const { play, setPlay, downloadImg, refresh, handleClick, setShowModal } = props;
+    const { play, setPlay, downloadImg, refresh, imgRef, randomizeBg, setShowModal } = props;
+
+    // Define the toBlob function using canvas.toBlob()
+    function toBlob(canvas) {
+        return new Promise((resolve, reject) => {
+            canvas.toBlob((blob) => {
+                if (blob) {
+                    resolve(blob);
+                } else {
+                    reject(new Error('Failed to convert canvas to blob'));
+                }
+            }, 'image/png');
+        });
+    }
+    const handleShare = async () => {
+        const newFile = await toBlob(imgRef.current);
+        const data = {
+            files: [
+                new File([newFile], 'image.png', {
+                    type: newFile.type,
+                }),
+            ],
+            title: 'Image',
+            text: 'image',
+        };
+        try {
+            await navigator.share(data);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
 
     return (
-        <div className='flex gap-3 items-center justify-center my-3'>
-            <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                type="button"
+        <div className='flex gap-1 items-center justify-center my-3'>
+            <button className=" p-2 hover:bg-gray-300 hover:bg-opacity-20 rounded hover:-translate-y-1 hover:scale-110 transition-all" type="button" onClick={refresh} >
+                <Refresh className="w-7 h-7 md:w-5 md:h-5" />
+            </button>
+            <button className=" p-2 hover:bg-gray-300 hover:bg-opacity-20 rounded hover:-translate-y-1 hover:scale-110 transition-all" onClick={downloadImg} >
+                <Download className="w-7 h-7 md:w-5 md:h-5" />
+            </button>
+            <button className=" p-2 hover:bg-gray-300 hover:bg-opacity-20 rounded hover:-translate-y-1 hover:scale-110 transition-all" onClick={() => setShowModal(true)} >
+                <Search className="w-7 h-7 md:w-5 md:h-5" />
 
-                onClick={refresh}
-            >
+            </button>
 
-                <Refresh />
-            </motion.button>
-            <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={downloadImg}
+            {
+                play === false ?
+                    <button className=" p-2 hover:bg-gray-300 hover:bg-opacity-20 rounded hover:-translate-y-1 hover:scale-110 transition-all" onClick={() => setPlay(true)} >
+                        <Play className="w-7 h-7 md:w-5 md:h-5" />
+                    </button>
+                    :
+                    <button className=" p-2 hover:bg-gray-300 hover:bg-opacity-20 rounded hover:-translate-y-1 hover:scale-110 transition-all" onClick={() => setPlay(false)} >
+                        <Pause className="w-7 h-7 md:w-5 md:h-5" />
+                    </button>
+            }
 
-            >
+            <button className=" p-2 hover:bg-gray-300 hover:bg-opacity-20 rounded hover:-translate-y-1 hover:scale-110 transition-all" onClick={randomizeBg} >
+                <Screenshot className="w-7 h-7 md:w-5 md:h-5" />
 
-                <Download />
+            </button>
+            <button className=" p-2 hover:bg-gray-300 hover:bg-opacity-20 rounded hover:-translate-y-1 hover:scale-110 transition-all" onClick={handleShare} >
+                <Share className="w-7 h-7 md:w-5 md:h-5" />
 
-            </motion.button>
-            <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-
-                onClick={() => setShowModal(true)}
-            >
-                <Search />
-
-            </motion.button>
-
-            {/* search modal  */}
-
-
-            {play === false && (
-                <motion.button
-
-                    onClick={() => setPlay(true)}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                >
-                    <Play />
-
-                </motion.button>
-            )}
-            {play === true && (
-                <motion.button
-
-                    onClick={() => setPlay(false)}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                >
-                    <Pause />
-                </motion.button>
-            )}
-            <motion.button
-                onClick={handleClick}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-            >
-                <Screenshot />
-
-            </motion.button>
+            </button>
         </div>
     )
 }

@@ -48,12 +48,8 @@ const Ayah = () => {
 
   // screenshot download
   const imgRef = useRef();
-  const downloadImg = () => {
-    saveAsJpeg(imgRef.current, {
-      fileName: "ayah",
-      quality: 1
-    });
-  };
+  const canvasRef = useRef();
+ 
 
 
   // random ayah 
@@ -71,6 +67,7 @@ const Ayah = () => {
 
   return (
     <>
+      <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
       <div
         ref={imgRef}
         className="flex items-center justify-center min-h-screen bg-gray-900"
@@ -106,7 +103,7 @@ const Ayah = () => {
                 </div>
 
                 {/* controls  */}
-                <Controls props={{ setShowModal, imgRef, downloadImg, refresh, play, setPlay, randomizeBg }} />
+                <Controls props={{ setShowModal, canvasRef, imgRef, refresh, play, setPlay, randomizeBg }} />
 
                 <ReactPlayer
                   url={audio?.audio}
